@@ -1,0 +1,4 @@
+,urls,Status,ssl
+0,https://www.google.com/,,https://www.google.com/ has a valid SSL certificate!
+1,http://zunamelt.com/,,http://zunamelt.com/ has a valid SSL certificate!
+2,https://zunamelt.com/,,https://zunamelt.com/ has INVALID SSL certificate!
