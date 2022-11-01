@@ -1,0 +1,4 @@
+Urls,Status_code,SSL
+https://www.google.com/,OK,https://www.google.com/ has a valid SSL certificate!
+http://zunamelt.com/,OK,http://zunamelt.com/ has a valid SSL certificate!
+https://zunamelt.com/,"NOT OK: HTTPSConnectionPool(host='zunamelt.com', port=443): Max retries exceeded with url: / (Caused by SSLError(CertificateError(""hostname 'zunamelt.com' doesn't match '5d0f99d.online-server.cloud'"")))",https://zunamelt.com/ has INVALID SSL certificate!
