@@ -134,7 +134,7 @@ def sitemap(request):
                    'status_code': codes,})
         #print(df.loc[0])
         #dataframestate
-        dataframestate.to_csv("./media/input/output.csv", index=None)
+        dataframestate.to_csv("./media/input/data.csv", index=None)
     #return HttpResponse("Hello, world!")
     return render(request, 'sitemap.html', { 'sitemapdocuments': sitemapdocuments })
 
