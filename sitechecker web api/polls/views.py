@@ -101,20 +101,40 @@ def sitemap(request):
         r = req.get(baseurls)
         soup = BeautifulSoup(r.content, 'html.parser')
         links = [item.text for item in soup.select("loc")]
-        #with open("./media/input/{fname}.csv".format(fname = info),'w') as f:
-        with open("./media/input/data.csv",'w') as f:
-            writer = csv.writer(f)
-            writer.writerow(["Url", "Status Code"])
-            for link in links:
-                r = req.get(link)
-                print(link, r.status_code)
-                writer.writerow([link, r.status_code])
-                soup = BeautifulSoup(r.content, 'html.parser')
-                end = [item.text for item in soup.select("loc")]
-                for a in end:
-                    r = req.head(a)
-                    print(a, r.status_code)
-                    writer.writerow([a, r.status_code])
+        # with open("desss_data.csv", 'w') as f:
+        #     writer = csv.writer(f)
+        #     writer.writerow(["Url", "Status Code"])
+        url = []
+        codes = []
+        for link in links:
+          # r = req.get(link)
+          # print(link, r.status_code)
+          #print(link)
+          url.append(link)
+          try:
+            r = req.get(link)
+          except Exception as e:
+            #print(f"NOT OK: {str(e)}")
+            b = f"NOT OK: {str(e)}"
+            codes.append(b)
+          else:
+            if r.status_code == 200:
+              #print("OK")
+              # b = f"OK: HTTP response code {r.status_code}"
+              b = f"OK: {r.status_code}"
+              codes.append(b)
+            else:
+              #print(f"NOT OK: HTTP response code {r.status_code}")
+              b = f"NOT OK: HTTP response code {r.status_code}"
+              codes.append(b)
+        #print(url)
+        #print(codes)
+        #import pandas as pd
+        dataframestate = pd.DataFrame({'urls': url,
+                   'status_code': codes,})
+        #print(df.loc[0])
+        #dataframestate
+        dataframestate.to_csv("./media/input/output.csv", index=None)
     #return HttpResponse("Hello, world!")
     return render(request, 'sitemap.html', { 'sitemapdocuments': sitemapdocuments })
 
@@ -133,4 +153,12 @@ def sitemap_upload(request):
         form = SitemapForm()
     return render(request, 'sitemap_upload.html', {
         'form': form
+    })
+
+
+
+def csv_list(request):
+    document = Document.objects.all()
+    return render(request, 'form_upload.html', {
+         'documents': document
     })
