@@ -95,27 +95,39 @@ def sitemap(request):
         baseurls = obj.url
         info = obj.info
         #print(rank)
-    print(baseurls)
-    print(info)
+    #print(baseurls)
+    #print(info)
     with requests.Session() as req:
         r = req.get(baseurls)
         soup = BeautifulSoup(r.content, 'html.parser')
         links = [item.text for item in soup.select("loc")]
-        #with open("./media/input/{fname}.csv".format(fname = info),'w') as f:
-        with open("/var/www/ssl/site/media/input/data.csv",'w') as f:
-            writer = csv.writer(f)
-            writer.writerow(["Url", "Status Code"])
-            for link in links:
-                r = req.get(link)
-                print(link, r.status_code)
-                writer.writerow([link, r.status_code])
-                soup = BeautifulSoup(r.content, 'html.parser')
-                end = [item.text for item in soup.select("loc")]
-                for a in end:
-                    r = req.head(a)
-                    print(a, r.status_code)
-                    writer.writerow([a, r.status_code])
-    #return HttpResponse("Hello, world!")
+        url = []
+        codes = []
+        for link in links:
+          url.append(link)
+          try:
+            r = req.get(link)
+          except Exception as e:
+            #print(f"NOT OK: {str(e)}")
+            b = f"NOT OK: {str(e)}"
+            codes.append(b)
+          else:
+            if r.status_code == 200:
+              #print("OK")
+              # b = f"OK: HTTP response code {r.status_code}"
+              b = f"OK: {r.status_code}"
+              codes.append(b)
+            else:
+              #print(f"NOT OK: HTTP response code {r.status_code}")
+              b = f"NOT OK: HTTP response code {r.status_code}"
+              codes.append(b)
+        #print(url)
+        #print(codes)
+        dataframestate = pd.DataFrame({'urls': url,
+                   'status_code': codes,})
+        #print(df.loc[0])
+        #dataframestate
+        dataframestate.to_csv("/var/www/ssl/site/media/input/output.csv", index=None)
     return render(request, 'sitemap.html', { 'sitemapdocuments': sitemapdocuments })
 
 
