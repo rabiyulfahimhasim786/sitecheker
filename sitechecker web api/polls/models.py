@@ -7,6 +7,13 @@ class Document(models.Model):
     document = models.FileField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.description
+    
+    def delete(self, *args, **kwargs):
+        if self.document:
+            self.document.delete()
+            super().delete(*args, **kwargs)
 
 class Sitemap(models.Model):
     info = models.CharField(max_length=255, blank=True)
