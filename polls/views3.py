@@ -120,8 +120,8 @@ def csvs(request):
     rev = expiredf['Expiry_date'].apply(foo)
     print (rev)
     ds = rev.iloc[:,[6,3,0]]
-    ds.to_csv("/var/www/ssl/site/media/input/data.csv")
-    filedata = "/var/www/ssl/site/media/input/data.csv"
+    ds.to_csv("/var/www/ssl/site/media/input/data1.csv")
+    filedata = "/var/www/ssl/site/media/input/data1.csv"
     dfjson = pd.read_csv(filedata , index_col=None, header=0)
     #geeks = df.to_html()
     json_records = dfjson.reset_index().to_json(orient ='records')
