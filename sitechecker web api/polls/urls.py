@@ -9,6 +9,7 @@ urlpatterns = [
     # path('fileuploading/', views.uploadings, name='uploadings'),
     path('csvform/', views.csv_upload, name='csv_upload'),
     path('csv/', views.csvs, name='csvs'),
+    path('csv/<int:id>/',views.delete_document,name='delete_document'),
     path('sitemapurl/', views.sitemap_upload, name='sitemap_upload'),
     path('sitemapxml/', views.sitemap, name='sitemap'),
 ]

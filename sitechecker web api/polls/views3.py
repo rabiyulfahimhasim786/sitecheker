@@ -7,7 +7,7 @@ from .models import Document, Sitemap
 from .forms import DocumentForm, SitemapForm
 def index(request):
     return HttpResponse("Hello, world!")
-
+import json
 import requests
 # import advertools as adv
 import pandas as pd
@@ -114,7 +114,29 @@ def csvs(request):
     #                'Status_code': easy,
     #                'SSL': ssl,})
     dframe.to_csv("/var/www/ssl/site/media/output/output1.csv", index=None)
-    return render(request, 'csv.html', { 'documents': documents })
+    expiredf =pd.read_csv('/var/www/ssl/site/media/output/output1.csv')
+    df_list = list(expiredf['Expiry_date'])
+    foo = lambda x: pd.Series([i for i in reversed(x.split(' '))])
+    rev = expiredf['Expiry_date'].apply(foo)
+    print (rev)
+    ds = rev.iloc[:,[6,3,0]]
+    ds.to_csv("/var/www/ssl/site/media/input/data.csv")
+    filedata = "/var/www/ssl/site/media/input/data.csv"
+    dfjson = pd.read_csv(filedata , index_col=None, header=0)
+    #geeks = df.to_html()
+    json_records = dfjson.reset_index().to_json(orient ='records')
+    data = []
+    data = json.loads(json_records)
+    #status
+    filepath = "/var/www/ssl/site/media/output/output1.csv"
+    dfjson = pd.read_csv(filepath , index_col=None, header=0)
+    #geeks = df.to_html()
+    json_ssl = dfjson.reset_index().to_json(orient ='records')
+    datassl = []
+    datassl = json.loads(json_ssl)
+    print(datassl)
+    return render(request, 'csv.html', { 'documents': documents, 'd': data, 'dssl': datassl })
+    #return render(request, 'csv.html', { 'documents': documents })
     # return HttpResponse("Hello, world!"+rank)
 
 def csv_upload(request):
@@ -129,9 +151,20 @@ def csv_upload(request):
             return redirect('csvs')
     else:
         form = DocumentForm()
+        documents = Document.objects.all()
     return render(request, 'form_upload.html', {
-        'form': form
+        'form': form, 'documents': documents
     })
+
+
+def delete_document(request,id):
+    if request.method == 'POST':
+        document = Document.objects.get(id=id)
+# if `save`=True, changes are saved to the db else only the file is deleted
+        #document.delete(id=id)
+        document.delete()
+        return redirect('csv_upload')
+
 import bs4
 from bs4 import BeautifulSoup
 def sitemap(request):
