@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Simple File Upload</title>
+    <title>SSL Expirydate checker</title>
     <!-- <link rel="stylesheet" href="css/style.css"> -->
     <!-- CSS only -->
     <style>
@@ -61,7 +61,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-dark header">
-      <a href="#" style="margin-left: 15px;" class="btn btn-primary bace_title">CSV keyword analysis</a>
+      <a href="#" style="margin-left: 600px;" class="btn btn-primary bace_title">SSL checker</a>
     </nav>
     <div class="d-flex justify-content-center mt-5 upload_file_box">
       <div class="card upload_box p-3" style="width: 30rem;">
@@ -78,10 +78,13 @@
 
   </form>
   <p></p>
-  <a href="{{ '/media/output/output1.csv' }}">output file</a>
-  <p></p>
+  <div>
+  <p style="text-align: left;">Download files:</p>
+  <!-- <a href="{{ '/media/output/output1.csv' }}">output file</a> -->
+  <ul class="upload_buttons d-flex justify-content-left" style="list-style-type: none;">
+  <a class="btn btn-primary btn-sm m-1" href="{{ '/media/output/output1.csv' }}">Output file</a></ul></div>
   
-  <p>Uploaded files:</p>
+  <p style="text-align: left;">Uploaded files:</p>
   <ul>
     {% for obj in documents %}
       <li>
