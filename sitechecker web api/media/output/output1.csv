@@ -1,6 +1,7 @@
 Urls,Status_code,SSL,Expiry_date
-https://desss-portfolio.com/,NOT OK: HTTP response code 403,https://desss-portfolio.com/ has a valid SSL certificate!,Domain name: desss-portfolio.com Expiry Date: 2023-01-22 Expiry Day: 45
-https://www.desss.com/,OK,https://www.desss.com/ has a valid SSL certificate!,Domain name: desss.com Expiry Date: 2023-02-12 Expiry Day: 66
-http://zunamelt.com/,OK,http://zunamelt.com/ has a valid SSL certificate!,Domain name: zunamelt.com Expiry Date: 2023-02-12 Expiry Day: 66
-https://trophydeals.com/,OK,https://trophydeals.com/ has a valid SSL certificate!,Domain name: trophydeals.com Expiry Date: 2023-07-27 Expiry Day: 231
-https://trophydeals.com/,OK,https://trophydeals.com/ has a valid SSL certificate!,Domain name: trophydeals.com Expiry Date: 2023-07-27 Expiry Day: 231
+https://desss-portfolio.com/,NOT OK: HTTP response code 403,https://desss-portfolio.com/ has a valid SSL certificate!,Domain name: desss-portfolio.com Expiry Date: 2023-01-22 Expiry Day: 38
+https://www.desss.com/,OK,https://www.desss.com/ has a valid SSL certificate!,Domain name: desss.com Expiry Date: 2023-02-12 Expiry Day: 59
+http://zunamelt.com/,OK,http://zunamelt.com/ has a valid SSL certificate!,Domain name: zunamelt.com Expiry Date: 2023-02-12 Expiry Day: 59
+https://trophydeals.com/,OK,https://trophydeals.com/ has a valid SSL certificate!,Domain name: trophydeals.com Expiry Date: 2023-07-27 Expiry Day: 224
+https://trophydeals.com/,OK,https://trophydeals.com/ has a valid SSL certificate!,Domain name: trophydeals.com Expiry Date: 2023-07-27 Expiry Day: 224
+https://www.google.com/,OK,https://www.google.com/ has a valid SSL certificate!,Domain name: google.com Expiry Date: 2023-01-30 Expiry Day: 46

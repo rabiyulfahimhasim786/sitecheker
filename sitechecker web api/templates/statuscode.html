@@ -31,7 +31,7 @@
   <div>
     <p style="text-align: left;">Download files:</p>
     <ul class="upload_buttons d-flex justify-content-left" style="list-style-type: none;">
-  <a class="btn btn-primary btn-sm m-1" href="{{ '/media/output/output1.csv' }}">Output</a></ul></div>
+  <a class="btn btn-primary btn-sm m-1" href="{{ '/media/dynamic/statuscode/urls_withStatusCode.csv' }}">Output</a></ul></div>
 
   <p></p>
   <!-- <a href="{{ '/media/input/data1.csv' }}">input file</a> -->
@@ -71,18 +71,18 @@
       <thead>
         <tr>
           <!-- <th>URL</th> -->
-          <th>SSL </th>
+          <th>url </th>
           <th>Status code</th>
         </tr>
       </thead>
       <tbody>
       <!-- jinja2 Technique -->
  
-      {% for a in dssl %}
+      {% for a in t %}
         <tr>
           <!-- <td>{{a.Urls}}</td> -->
-          <td>{{a.Status_code}}</td>
-          <td>{{a.SSL}}</td>
+          <td>{{a.url}}</td>
+          <td>{{a.status_code}}</td>
           <!-- <td>{{i.State}}</td>
           <td>{{i.Profit}}</td> -->
         </tr>
@@ -91,7 +91,6 @@
       </tbody>
     </table>
   </div>
-  
   <!-- <p>Uploaded files:</p>
   <ul>
     {% for obj in documents %}

@@ -2,9 +2,9 @@
 from django.shortcuts import render, redirect
 # Create your views here.
 from django.http import HttpResponse
-
-from .models import Document, Sitemap
-from .forms import DocumentForm, SitemapForm
+import time
+from .models import Document, Sitemap, Statuscode
+from .forms import DocumentForm, SitemapForm, StatuscodeForm
 def index(request):
     return HttpResponse("Hello, world!")
 
@@ -115,8 +115,8 @@ def csvs(request):
     rev = expiredf['Expiry_date'].apply(foo)
     print (rev)
     ds = rev.iloc[:,[6,3,0]]
-    ds.to_csv("./media/input/data.csv")
-    filedata = "./media/input/data.csv"
+    ds.to_csv("./media/input/data1.csv")
+    filedata = "./media/input/data1.csv"
     dfjson = pd.read_csv(filedata , index_col=None, header=0)
     #geeks = df.to_html()
     json_records = dfjson.reset_index().to_json(orient ='records')
@@ -238,3 +238,91 @@ def csv_list(request):
     return render(request, 'form_upload.html', {
          'documents': document
     })
+
+
+
+def getStatuscode(url):
+    try:
+        r = requests.head(url,verify=False,timeout=5) # it is faster to only request the header
+        return (r.status_code)
+
+    except:
+        return 'Notworking'
+        #return -1
+
+
+def statuscoderetrieve(request):
+    sdocuments = Statuscode.objects.all()
+    #rank = Document.objects.latest('id')
+    #print(rank)
+    for obj in sdocuments:
+        statusrank = obj.csvfile.url
+        #print(rank)
+    print(statusrank)
+    SLEEP = 0 # Time in seconds the script should wait between requests
+    url_list = []
+    url_statuscodes = []
+    url_statuscodes.append(["url","status_code"]) # set the file header for output
+    # with open('.'+statusrank, encoding='utf-8-sig') as csvfile:
+    #     reader = csv.reader(csvfile)
+    #     count = 0
+    #     fsa=[]
+    #     for row in reader:
+    #         count = count+1
+    #         #print(row[2])
+    #         fsa.append(row[0])
+    #     print(fsa[1:])
+    # Url checks from file Input
+    # use one url per line that should be checked
+    #with open('urls.csv', newline='') as f:
+    with open('.'+statusrank, encoding='utf-8-sig', newline='') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            url_list.append(row[0])
+    # Loop over full list
+    for url in url_list:
+        print(url)
+        check = [url,getStatuscode(url)]
+        time.sleep(SLEEP)
+        url_statuscodes.append(check)
+
+    # Save file
+    with open("./media/dynamic/statuscode/urls_withStatusCode.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(url_statuscodes)
+    filedata = "./media/dynamic/statuscode/urls_withStatusCode.csv"
+    dfjson = pd.read_csv(filedata , index_col=None, header=0)
+    #geeks = df.to_html()
+    json_records = dfjson.reset_index().to_json(orient ='records')
+    test = []
+    test = json.loads(json_records)
+    return render(request, 'statuscode.html', { 'documents': sdocuments, 't': test })
+
+    #return render(request, 'csv.html', { 'documents': documents })
+    # return HttpResponse("Hello, world!"+rank)
+
+def statuscsv_upload(request):
+    if request.method == 'POST':
+        form = StatuscodeForm(request.POST, request.FILES)
+        if form.is_valid():
+            #func_obj = form
+            #func_obj.sourceFile = form.cleaned_data['sourceFile']
+            form.save()
+            #print(form.Document.document)
+            #form.save()
+            return redirect('statuscoderetrieve')
+    else:
+        form = StatuscodeForm()
+        documents = Statuscode.objects.all()
+    return render(request, 'statuscsv_upload.html', {
+        'form': form, 'documents': documents
+    })
+
+
+def statusdelete_document(request,id):
+    if request.method == 'POST':
+        csvfile = Statuscode.objects.get(id=id)
+# if `save`=True, changes are saved to the db else only the file is deleted
+        #document.delete(id=id)
+        csvfile.delete()
+        return redirect('statuscsv_upload')

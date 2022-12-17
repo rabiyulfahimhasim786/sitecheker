@@ -86,12 +86,12 @@
   
   <p style="text-align: left;">Uploaded files:</p>
   <ul>
-    {% for obj in documents %}
+    {% for obj in sdocuments %}
       <li>
        
-        <a href="{{ obj.document.url }}">{{ obj.document.name }}</a>
-        <small>(Uploaded at: {{ obj.uploaded_at }})</small>
-        <form method="POST" action="{% url 'delete_document' obj.id %}">
+        <a href="{{ obj.csvfile.url }}">{{ obj.name.name }}</a>
+        <small>(Uploaded at: {{ obj.uploaded_time }})</small>
+        <form method="POST" action="{% url 'statusdelete_document' obj.id %}">
           {% csrf_token %}
           <button type="submit" class="btn btn-danger btn-sm">Delete</button>
         </form> 

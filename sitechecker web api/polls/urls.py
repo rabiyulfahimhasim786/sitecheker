@@ -12,4 +12,7 @@ urlpatterns = [
     path('csv/<int:id>/',views.delete_document,name='delete_document'),
     path('sitemapurl/', views.sitemap_upload, name='sitemap_upload'),
     path('sitemapxml/', views.sitemap, name='sitemap'),
+    path('statusform/', views.statuscsv_upload, name='statuscsv_upload'),
+    path('status/', views.statuscoderetrieve, name='statuscoderetrieve'),
+    path('status/<int:id>/',views.statusdelete_document,name='statusdelete_document'),
 ]
