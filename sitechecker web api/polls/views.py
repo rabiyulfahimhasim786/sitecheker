@@ -2,17 +2,21 @@
 from django.shortcuts import render, redirect
 # Create your views here.
 from django.http import HttpResponse
-
-from .models import Document, Sitemap
-from .forms import DocumentForm, SitemapForm
+from .models import Document, Sitemap, Statuscode
+from .forms import DocumentForm, SitemapForm, StatuscodeForm
+#from .models import Document, Sitemap
+#from .forms import DocumentForm, SitemapForm
+import time
 def index(request):
     return HttpResponse("Hello, world!")
-
+import json
 import requests
 # import advertools as adv
 import pandas as pd
 pd.options.display.max_columns = None
-import json
+
+import csv
+
 import csv
 import re
 import socket
@@ -45,7 +49,7 @@ def csvs(request):
         rank = obj.document.url
         #print(rank)
     #print(rank)
-    with open('.'+rank, encoding='utf-8-sig') as csvfile:
+    with open('/var/www/ssl/site'+rank, encoding='utf-8-sig') as csvfile:
         reader = csv.reader(csvfile)
         count = 0
         fsa=[]
@@ -108,22 +112,28 @@ def csvs(request):
                    'Status_code': easy,
                    'SSL': ssl,
                    'Expiry_date': espirydate,})
-    dframe.to_csv("./media/output/output1.csv", index=None)
-    expiredf =pd.read_csv('./media/output/output1.csv')
+    # dframe = pd.DataFrame({'Urls': fsa[1:],
+    #                'Status_code': easy,
+    #                'SSL': ssl,})
+    dframe.to_csv("/var/www/ssl/site/media/output/output1.csv", index=None)
+    expiredf =pd.read_csv('/var/www/ssl/site/media/output/output1.csv')
     df_list = list(expiredf['Expiry_date'])
     foo = lambda x: pd.Series([i for i in reversed(x.split(' '))])
     rev = expiredf['Expiry_date'].apply(foo)
     print (rev)
     ds = rev.iloc[:,[6,3,0]]
-    ds.to_csv("./media/input/data.csv")
-    filedata = "./media/input/data.csv"
+    ds.to_csv("/var/www/ssl/site/media/input/data1.csv")
+    file = pd.read_csv("/var/www/ssl/site/media/input/data1.csv")
+    headerList = ['S.No', 'Domain Name', 'Expiry Date','Expiry Days']
+    file.to_csv("/var/www/ssl/site/media/input/data2.csv", header=headerList, index=None, encoding='utf-8')
+    filedata = "/var/www/ssl/site/media/input/data1.csv"
     dfjson = pd.read_csv(filedata , index_col=None, header=0)
     #geeks = df.to_html()
     json_records = dfjson.reset_index().to_json(orient ='records')
     data = []
     data = json.loads(json_records)
     #status
-    filepath = "./media/output/output1.csv"
+    filepath = "/var/www/ssl/site/media/output/output1.csv"
     dfjson = pd.read_csv(filepath , index_col=None, header=0)
     #geeks = df.to_html()
     json_ssl = dfjson.reset_index().to_json(orient ='records')
@@ -146,7 +156,7 @@ def csv_upload(request):
             return redirect('csvs')
     else:
         form = DocumentForm()
-        documents = Document.objects.all()
+        documents = Document.objects.all().order_by('-id')
     return render(request, 'form_upload.html', {
         'form': form, 'documents': documents
     })
@@ -170,21 +180,15 @@ def sitemap(request):
         baseurls = obj.url
         info = obj.info
         #print(rank)
-    print(baseurls)
-    print(info)
+    #print(baseurls)
+    #print(info)
     with requests.Session() as req:
         r = req.get(baseurls)
         soup = BeautifulSoup(r.content, 'html.parser')
         links = [item.text for item in soup.select("loc")]
-        # with open("desss_data.csv", 'w') as f:
-        #     writer = csv.writer(f)
-        #     writer.writerow(["Url", "Status Code"])
         url = []
         codes = []
         for link in links:
-          # r = req.get(link)
-          # print(link, r.status_code)
-          #print(link)
           url.append(link)
           try:
             r = req.get(link)
@@ -204,13 +208,11 @@ def sitemap(request):
               codes.append(b)
         #print(url)
         #print(codes)
-        #import pandas as pd
         dataframestate = pd.DataFrame({'urls': url,
                    'status_code': codes,})
         #print(df.loc[0])
         #dataframestate
-        dataframestate.to_csv("./media/input/data.csv", index=None)
-    #return HttpResponse("Hello, world!")
+        dataframestate.to_csv("/var/www/ssl/site/media/input/data.csv", index=None)
     return render(request, 'sitemap.html', { 'sitemapdocuments': sitemapdocuments })
 
 
@@ -231,10 +233,97 @@ def sitemap_upload(request):
     })
 
 
+def getStatuscode(url):
+    try:
+        r = requests.head(url,verify=False,timeout=5) # it is faster to only request the header
+        return (r.status_code)
+
+    except:
+        return 'Notworking'
+        #return -1
 
 
-def csv_list(request):
-    document = Document.objects.all()
-    return render(request, 'form_upload.html', {
-         'documents': document
+def statuscoderetrieve(request):
+    sdocuments = Statuscode.objects.all()
+    #rank = Document.objects.latest('id')
+    #print(rank)
+    for obj in sdocuments:
+        statusrank = obj.csvfile.url
+        #print(rank)
+    print(statusrank)
+    SLEEP = 0 # Time in seconds the script should wait between requests
+    url_list = []
+    url_statuscodes = []
+    url_statuscodes.append(["url","status_code"]) # set the file header for output
+    # with open('.'+statusrank, encoding='utf-8-sig') as csvfile:
+    #     reader = csv.reader(csvfile)
+    #     count = 0
+    #     fsa=[]
+    #     for row in reader:
+    #         count = count+1
+    #         #print(row[2])
+    #         fsa.append(row[0])
+    #     print(fsa[1:])
+    # Url checks from file Input
+    # use one url per line that should be checked
+    #with open('urls.csv', newline='') as f:
+    with open('/var/www/ssl/site'+statusrank, encoding='utf-8-sig', newline='') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            url_list.append(row[0])
+    # Loop over full list
+    for url in url_list:
+        print(url)
+        check = [url,getStatuscode(url)]
+        time.sleep(SLEEP)
+        url_statuscodes.append(check)
+
+    # Save file
+    with open("/var/www/ssl/site/media/dynamic/statuscode/urls_withStatusCode.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(url_statuscodes)
+    filedata = "/var/www/ssl/site/media/dynamic/statuscode/urls_withStatusCode.csv"
+    dfjson = pd.read_csv(filedata , index_col=None, header=0)
+    #geeks = df.to_html()
+    json_records = dfjson.reset_index().to_json(orient ='records')
+    test = []
+    test = json.loads(json_records)
+    #return render(request, 'statuscode.html', { 'documents': sdocuments, 't': test })
+    dataframe = pd.read_csv(filedata , index_col=None, header=0)
+    options = ['100', '101', '102','103','201','202','203','204','205','206','207','208','226','300','301','302','303','304','305','306','307','308','400','401','402','403','404','405','406','407','408','409','410','411','412','413','414','415','416','417','418','421','422','423','424','425','426','428','429','431','451','500','501','502','503','504','505','506','507','508','510','511','Notworking']
+    rslt_df = dataframe[dataframe['status_code'].isin(options)]
+    rslt_df.to_csv("/var/www/ssl/site/media/dynamic/statuscode/filter.csv", index=False)
+    filterdata = "/var/www/ssl/site/media/dynamic/statuscode/filter.csv"
+    filterjson = pd.read_csv(filterdata , index_col=None, header=0)
+    json_file = filterjson.reset_index().to_json(orient ='records')
+    sample = []
+    sample = json.loads(json_file)
+    return render(request, 'statuscode.html', { 'documents': sdocuments, 't': test, 'f': sample })
+    #return render(request, 'csv.html', { 'documents': documents })
+    # return HttpResponse("Hello, world!"+rank)
+
+def statuscsv_upload(request):
+    if request.method == 'POST':
+        form = StatuscodeForm(request.POST, request.FILES)
+        if form.is_valid():
+            #func_obj = form
+            #func_obj.sourceFile = form.cleaned_data['sourceFile']
+            form.save()
+            #print(form.Document.document)
+            #form.save()
+            return redirect('statuscoderetrieve')
+    else:
+        form = StatuscodeForm()
+        documents = Statuscode.objects.all().order_by('-id')
+    return render(request, 'statuscsv_upload.html', {
+        'form': form, 'documents': documents
     })
+
+
+def statusdelete_document(request,id):
+    if request.method == 'POST':
+        csvfile = Statuscode.objects.get(id=id)
+# if `save`=True, changes are saved to the db else only the file is deleted
+        #document.delete(id=id)
+        csvfile.delete()
+        return redirect('statuscsv_upload')

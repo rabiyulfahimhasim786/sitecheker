@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>SSL Expirydate checker</title>
+    <title>Website Status Code Checker</title>
     <!-- <link rel="stylesheet" href="css/style.css"> -->
     <!-- CSS only -->
     <style>
@@ -83,7 +83,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-dark header">
-      <a href="#" style="margin-left: 20px;" class="btn btn-primary bace_title">SSL checker</a>
+      <a href="#" style="margin-left: 550px;" class="btn btn-primary bace_title">Website Status Code Checker</a>
     </nav>
     <div class="d-flex justify-content-center mt-5 upload_file_box">
       <div class="card upload_box p-3" style="width: 30rem;">
@@ -92,27 +92,27 @@
        {% block content %}
   <!-- <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }} -->
-    <!-- <button class="btn btn-primary upload_butons" type="submit">Upload</button> -->
-    <!-- <button type="submit" class="button upload_butons" onclick="this.classList.toggle('button--loading')">
+    {{ form.as_p }}
+    <button type="submit" class="button upload_butons" onclick="this.classList.toggle('button--loading')">
       <span class="button__text">Upload</span>
     </button>
 
   </form> -->
+  <p></p>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <!-- <input type="hidden" name="csrfmiddlewaretoken" value="q80HGOoWdWihPeXnrL6nIjDH4OjgD4NtgccUE8yDzYWIgoON2ekAJcsQKcJvbI1o"> -->
     <div class="descritionsclass">
     <label for="id_description">Description:</label>
     <!-- <input type="text" name="description" maxlength="255" id="id_description"> -->
-    <textarea type="text" class="description" name="description" maxlength="255" id="id_description" rows="5" cols="33"></textarea>
+    <textarea type="text" class="name" name="name" maxlength="255" id="id_name" rows="5" cols="33"></textarea>
     
     </div>
   
   <p></p>
   <p>
-    <label class="documentlabel" for="id_document">Document:</label>
-    <input type="file" name="document" required="" id="id_document">
+    <label class="csvfilelabel" for="id_csvfile">Document:</label>
+    <input type="file" name="csvfile" required="" id="id_csvfile">
     
     
       
@@ -125,21 +125,21 @@
     
   </form>
   <div>
-  <p style="text-align: left; margin-top:10px">Download files:</p>
+  <p style="text-align: left; margin-top:10px ">Download files:</p>
   <!-- <a href="{{ '/media/output/output1.csv' }}">output file</a> -->
-  <!-- <ul class="upload_buttons d-flex justify-content-left" style="list-style-type: none;"> -->
-  <a class="btn btn-primary " href="{{ '/media/output/output1.csv' }}">Output file</a></div>
+ <!-- <ul class="upload_buttons d-flex justify-content-left" style="list-style-type: none;">-->
+  <a class="btn btn-primary " href="{{ '/media/dynamic/statuscode/urls_withStatusCode.csv' }}">Output file</a></div>
   
-  <p style="text-align: left;  margin-top: 10px;">Uploaded files:</p>
+  <p style="text-align: left; margin-top:10px ">Uploaded files:</p>
   <ul>
     {% for obj in documents %}
       <li>
        
-        <a href="{{ obj.document.url }}">{{ obj.document.name }}</a>
-        <small>(Description : {{ obj.description }})</small>
-        <form method="POST" action="{% url 'delete_document' obj.id %}">
+        <a href="{{ obj.csvfile.url }}">{{ obj.csvfile.name }}</a>
+        <small>(Description : {{ obj.name }})</small>
+        <form method="POST" action="{% url 'statusdelete_document' obj.id %}">
           {% csrf_token %}
-          <button type="submit" class="btn btn-danger ">Delete</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
         </form> 
         <!-- <a href="" class="btn btn-danger btn-sm">Delete</a> -->
       </li>
