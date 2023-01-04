@@ -15,4 +15,7 @@ urlpatterns = [
     path('statusform/', views.statuscsv_upload, name='statuscsv_upload'),
     path('status/', views.statuscoderetrieve, name='statuscoderetrieve'),
     path('status/<int:id>/',views.statusdelete_document,name='statusdelete_document'),
+    path('validitycheck/', views.expiry_upload, name='expiry_upload'),
+    path('validity/', views.expirycsv, name='expirycsv'),
+    path('validity/<int:id>/',views.expirydelete_document,name='expirydelete_document'),
 ]

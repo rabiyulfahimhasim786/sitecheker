@@ -7,38 +7,14 @@ from .models import Document, Sitemap
 from .forms import DocumentForm, SitemapForm
 def index(request):
     return HttpResponse("Hello, world!")
-import json
+
 import requests
 # import advertools as adv
 import pandas as pd
 pd.options.display.max_columns = None
 
 import csv
-
-import csv
-import re
-import socket
-import ssl
-import datetime
-
-def ssl_expiry_datetime(hostname):
-    ssl_dateformat = r'%b %d %H:%M:%S %Y %Z'
-
-    context = ssl.create_default_context()
-    context.check_hostname = False
-
-    conn = context.wrap_socket(
-        socket.socket(socket.AF_INET),
-        server_hostname=hostname,
-    )
-    # 5 second timeout
-    conn.settimeout(5.0)
-
-    conn.connect((hostname, 443))
-    ssl_info = conn.getpeercert()
-    # Python datetime object
-    return datetime.datetime.strptime(ssl_info['notAfter'], ssl_dateformat)
-
+    
 def csvs(request):
     documents = Document.objects.all()
     #rank = Document.objects.latest('id')
@@ -86,57 +62,12 @@ def csvs(request):
             a = url + ' has INVALID SSL certificate!'
             ssl.append(a)
             #print(url + ' has INVALID SSL certificate!')
-    domains_url = []
-    for d in fsa[1:]:
-        #print(x)
-        urla = re.sub("^(https?://)?(http?://)?(www\.)?", "", d.strip('/'))
-        domains_url.append(urla)
-    #print(domains_url)
-    espirydate = []
-    for value in domains_url:
-        now = datetime.datetime.now()
-        try:
-            expire = ssl_expiry_datetime(value)
-            diff = expire - now
-            print ("Domain name: {} Expiry Date: {} Expiry Day: {}".format(value,expire.strftime("%Y-%m-%d"),diff.days))
-            expired = "Domain name: {} Expiry Date: {} Expiry Day: {}".format(value,expire.strftime("%Y-%m-%d"),diff.days)
-            espirydate.append(expired)
-        except Exception as e:
-            print (e)
-            expired = e
-            espirydate.append(expired)
         
     dframe = pd.DataFrame({'Urls': fsa[1:],
                    'Status_code': easy,
-                   'SSL': ssl,
-                   'Expiry_date': espirydate,})
-    # dframe = pd.DataFrame({'Urls': fsa[1:],
-    #                'Status_code': easy,
-    #                'SSL': ssl,})
+                   'SSL': ssl,})
     dframe.to_csv("/var/www/ssl/site/media/output/output1.csv", index=None)
-    expiredf =pd.read_csv('/var/www/ssl/site/media/output/output1.csv')
-    df_list = list(expiredf['Expiry_date'])
-    foo = lambda x: pd.Series([i for i in reversed(x.split(' '))])
-    rev = expiredf['Expiry_date'].apply(foo)
-    print (rev)
-    ds = rev.iloc[:,[6,3,0]]
-    ds.to_csv("/var/www/ssl/site/media/input/data.csv")
-    filedata = "/var/www/ssl/site/media/input/data.csv"
-    dfjson = pd.read_csv(filedata , index_col=None, header=0)
-    #geeks = df.to_html()
-    json_records = dfjson.reset_index().to_json(orient ='records')
-    data = []
-    data = json.loads(json_records)
-    #status
-    filepath = "/var/www/ssl/site/media/output/output1.csv"
-    dfjson = pd.read_csv(filepath , index_col=None, header=0)
-    #geeks = df.to_html()
-    json_ssl = dfjson.reset_index().to_json(orient ='records')
-    datassl = []
-    datassl = json.loads(json_ssl)
-    print(datassl)
-    return render(request, 'csv.html', { 'documents': documents, 'd': data, 'dssl': datassl })
-    #return render(request, 'csv.html', { 'documents': documents })
+    return render(request, 'csv.html', { 'documents': documents })
     # return HttpResponse("Hello, world!"+rank)
 
 def csv_upload(request):
@@ -151,20 +82,9 @@ def csv_upload(request):
             return redirect('csvs')
     else:
         form = DocumentForm()
-        documents = Document.objects.all()
     return render(request, 'form_upload.html', {
-        'form': form, 'documents': documents
+        'form': form
     })
-
-
-def delete_document(request,id):
-    if request.method == 'POST':
-        document = Document.objects.get(id=id)
-# if `save`=True, changes are saved to the db else only the file is deleted
-        #document.delete(id=id)
-        document.delete()
-        return redirect('csv_upload')
-
 import bs4
 from bs4 import BeautifulSoup
 def sitemap(request):

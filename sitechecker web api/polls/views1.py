@@ -14,7 +14,31 @@ import pandas as pd
 pd.options.display.max_columns = None
 
 import csv
-    
+
+import csv
+import re
+import socket
+import ssl
+import datetime
+
+def ssl_expiry_datetime(hostname):
+    ssl_dateformat = r'%b %d %H:%M:%S %Y %Z'
+
+    context = ssl.create_default_context()
+    context.check_hostname = False
+
+    conn = context.wrap_socket(
+        socket.socket(socket.AF_INET),
+        server_hostname=hostname,
+    )
+    # 5 second timeout
+    conn.settimeout(5.0)
+
+    conn.connect((hostname, 443))
+    ssl_info = conn.getpeercert()
+    # Python datetime object
+    return datetime.datetime.strptime(ssl_info['notAfter'], ssl_dateformat)
+
 def csvs(request):
     documents = Document.objects.all()
     #rank = Document.objects.latest('id')
@@ -62,10 +86,33 @@ def csvs(request):
             a = url + ' has INVALID SSL certificate!'
             ssl.append(a)
             #print(url + ' has INVALID SSL certificate!')
+    domains_url = []
+    for d in fsa[1:]:
+        #print(x)
+        urla = re.sub("^(https?://)?(http?://)?(www\.)?", "", d.strip('/'))
+        domains_url.append(urla)
+    #print(domains_url)
+    espirydate = []
+    for value in domains_url:
+        now = datetime.datetime.now()
+        try:
+            expire = ssl_expiry_datetime(value)
+            diff = expire - now
+            print ("Domain name: {} Expiry Date: {} Expiry Day: {}".format(value,expire.strftime("%Y-%m-%d"),diff.days))
+            expired = "Domain name: {} Expiry Date: {} Expiry Day: {}".format(value,expire.strftime("%Y-%m-%d"),diff.days)
+            espirydate.append(expired)
+        except Exception as e:
+            print (e)
+            expired = e
+            espirydate.append(expired)
         
     dframe = pd.DataFrame({'Urls': fsa[1:],
                    'Status_code': easy,
-                   'SSL': ssl,})
+                   'SSL': ssl,
+                   'Expiry_date': espirydate,})
+    # dframe = pd.DataFrame({'Urls': fsa[1:],
+    #                'Status_code': easy,
+    #                'SSL': ssl,})
     dframe.to_csv("/var/www/ssl/site/media/output/output1.csv", index=None)
     return render(request, 'csv.html', { 'documents': documents })
     # return HttpResponse("Hello, world!"+rank)
@@ -95,27 +142,39 @@ def sitemap(request):
         baseurls = obj.url
         info = obj.info
         #print(rank)
-    print(baseurls)
-    print(info)
+    #print(baseurls)
+    #print(info)
     with requests.Session() as req:
         r = req.get(baseurls)
         soup = BeautifulSoup(r.content, 'html.parser')
         links = [item.text for item in soup.select("loc")]
-        #with open("./media/input/{fname}.csv".format(fname = info),'w') as f:
-        with open("/var/www/ssl/site/media/input/data.csv",'w') as f:
-            writer = csv.writer(f)
-            writer.writerow(["Url", "Status Code"])
-            for link in links:
-                r = req.get(link)
-                print(link, r.status_code)
-                writer.writerow([link, r.status_code])
-                soup = BeautifulSoup(r.content, 'html.parser')
-                end = [item.text for item in soup.select("loc")]
-                for a in end:
-                    r = req.head(a)
-                    print(a, r.status_code)
-                    writer.writerow([a, r.status_code])
-    #return HttpResponse("Hello, world!")
+        url = []
+        codes = []
+        for link in links:
+          url.append(link)
+          try:
+            r = req.get(link)
+          except Exception as e:
+            #print(f"NOT OK: {str(e)}")
+            b = f"NOT OK: {str(e)}"
+            codes.append(b)
+          else:
+            if r.status_code == 200:
+              #print("OK")
+              # b = f"OK: HTTP response code {r.status_code}"
+              b = f"OK: {r.status_code}"
+              codes.append(b)
+            else:
+              #print(f"NOT OK: HTTP response code {r.status_code}")
+              b = f"NOT OK: HTTP response code {r.status_code}"
+              codes.append(b)
+        #print(url)
+        #print(codes)
+        dataframestate = pd.DataFrame({'urls': url,
+                   'status_code': codes,})
+        #print(df.loc[0])
+        #dataframestate
+        dataframestate.to_csv("/var/www/ssl/site/media/input/data.csv", index=None)
     return render(request, 'sitemap.html', { 'sitemapdocuments': sitemapdocuments })
 
 

@@ -32,3 +32,16 @@ class Statuscode(models.Model):
         if self.csvfile:
             self.csvfile.delete()
             super().delete(*args, **kwargs)
+
+class Expirydata(models.Model):
+    title = models.CharField(max_length=255, blank=True)
+    datafile = models.FileField(upload_to='filepage/')
+    uploaded_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    
+    def delete(self, *args, **kwargs):
+        if self.datafile:
+            self.datafile.delete()
+            super().delete(*args, **kwargs)

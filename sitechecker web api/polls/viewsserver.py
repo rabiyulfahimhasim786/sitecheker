@@ -372,26 +372,26 @@ def expirycsv(request):
                    #'Status_code': easy,
                    #'SSL': ssl,
                    'Expiry_date': espirydates,})
-    dframe.to_csv("./media/sslexpiry/data1.csv", index=None)
-    expiredf =pd.read_csv('./media/sslexpiry/data1.csv')
+    dframe.to_csv("/var/www/ssl/site/media/sslexpiry/data1.csv", index=None)
+    expiredf =pd.read_csv('/var/www/ssl/site/media/sslexpiry/data1.csv')
     df_list = list(expiredf['Expiry_date'])
     foo = lambda x: pd.Series([i for i in reversed(x.split(' '))])
     rev = expiredf['Expiry_date'].apply(foo)
     print (rev)
     ds = rev.iloc[:,[6,3,0]]
-    ds.to_csv("./media/sslexpiry/data1.csv")
-    files = pd.read_csv("./media/sslexpiry/data1.csv")
+    ds.to_csv("/var/www/ssl/site/media/sslexpiry/data1.csv")
+    files = pd.read_csv("/var/www/ssl/site/media/sslexpiry/data1.csv")
     headerList = ['S.No', 'Domain_Name', 'Expiry_Date','Expiry_Days']
-    files.to_csv("./media/sslexpiry/data2.csv", header=headerList, index=None, encoding='utf-8')
-    file2 = pd.read_csv("./media/sslexpiry/data2.csv")
+    files.to_csv("/var/www/ssl/site/media/sslexpiry/data2.csv", header=headerList, index=None, encoding='utf-8')
+    file2 = pd.read_csv("/var/www/ssl/site/media/sslexpiry/data2.csv")
     file2['Domain_Name'] = urls1
-    file2.to_csv("./media/sslexpiry/output.csv", index=False, encoding='utf-8')
-    fdata = "./media/sslexpiry/output.csv"
+    file2.to_csv("/var/www/ssl/site/media/sslexpiry/output.csv", index=False, encoding='utf-8')
+    fdata = "/var/www/ssl/site/media/sslexpiry/output.csv"
 
     file2['Expiry_Date'].replace('', np.nan, inplace=True)
     file2.dropna(subset=['Expiry_Date'], inplace=True)
-    file2.to_csv("./media/sslexpiry/sslvalid.csv", index=False, encoding='utf-8')
-    file6 = "./media/sslexpiry/sslvalid.csv"
+    file2.to_csv("/var/www/ssl/site/media/sslexpiry/sslvalid.csv", index=False, encoding='utf-8')
+    file6 = "/var/www/ssl/site/media/sslexpiry/sslvalid.csv"
     dfjson = pd.read_csv(file6 , index_col=None, header=0)
     json_records = dfjson.reset_index().to_json(orient ='records')
     test1 = []
@@ -402,8 +402,8 @@ def expirycsv(request):
     dataframe = pd.read_csv(fdata , index_col=None, header=0)
     options = ['Expired']
     rslt_df = dataframe[dataframe['Expiry_Days'].isin(options)]
-    rslt_df.to_csv("./media/sslexpiry/sslinvalid.csv", index=False)
-    filterdata1 = "./media/sslexpiry/sslinvalid.csv"
+    rslt_df.to_csv("/var/www/ssl/site/media/sslexpiry/sslinvalid.csv", index=False)
+    filterdata1 = "/var/www/ssl/site/media/sslexpiry/sslinvalid.csv"
     filterjson1 = pd.read_csv(filterdata1 , index_col=None, header=0)
     json_file = filterjson1.reset_index().to_json(orient ='records')
     sample1 = []
