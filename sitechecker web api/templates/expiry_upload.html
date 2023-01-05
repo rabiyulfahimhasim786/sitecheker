@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Website Expiry Checker</title>
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <!-- CSS only -->
+    <style>
+      .button {
+      position: relative;
+      padding: 8px 16px;
+      background: #0d6efd;
+      border: none;
+      outline: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    
+    .button:active {
+      background: #0d6efd;
+    }
+    
+    .button__text {
+      font: 20px;
+      color: #ffffff;
+      transition: all 0.2s;
+    }
+    
+    .button--loading .button__text {
+      visibility: hidden;
+      opacity: 0;
+    }
+    
+    .button--loading::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      border: 4px solid transparent;
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: button-loading-spinner 1s ease infinite;
+    }
+    
+    @keyframes button-loading-spinner {
+      from {
+        transform: rotate(0turn);
+      }
+    
+      to {
+        transform: rotate(1turn);
+      }
+    }
+
+    .description {
+    padding: 10px;
+    max-width: 100%;
+    line-height: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px #999;
+}
+.descritionsclass {
+    display: flex;
+}
+.descritionsclass label{
+    padding-right: 10px;
+}
+.documentlabel{
+  padding-right: 10px;
+}
+.upload_box {
+    border-radius: 20px !important;
+    box-shadow: rgb(14 30 37 / 12%) 0px 2px 4px 0px, rgb(14 30 37 / 32%) 0px 2px 16px 0px;
+  }
+    </style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark header">
+      <a href="#" style="margin-left: 550px;" class="btn btn-primary bace_title">Website Expirydate Checker</a>
+    </nav>
+    <div class="d-flex justify-content-center mt-5 upload_file_box">
+      <div class="card upload_box p-3" style="width: 30rem;">
+ 
+       
+       {% block content %}
+  <!-- <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button upload_butons" onclick="this.classList.toggle('button--loading')">
+      <span class="button__text">Upload</span>
+    </button>
+
+  </form> -->
+  <p></p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- <input type="hidden" name="csrfmiddlewaretoken" value="q80HGOoWdWihPeXnrL6nIjDH4OjgD4NtgccUE8yDzYWIgoON2ekAJcsQKcJvbI1o"> -->
+    <div class="descritionsclass">
+    <label for="id_description">Description:</label>
+    <!-- <input type="text" name="description" maxlength="255" id="id_description"> -->
+    <textarea type="text" class="title" name="title" maxlength="255" id="id_title" rows="5" cols="33"></textarea>
+    
+    </div>
+  
+  <p></p>
+  <p>
+    <label class="datafilelabel" for="id_datafile">Document:</label>
+    <input type="file" name="datafile" required="" id="id_datafile">
+    
+    
+      
+    
+  </p>
+    <!-- <button class="btn btn-primary upload_butons" type="submit">Upload</button> -->
+    <button type="submit" class="button upload_butons" onclick="this.classList.toggle('button--loading')">
+      <span class="button__text">Upload</span>
+    </button>
+    
+  </form>
+  <div>
+  <p style="text-align: left; margin-top:10px ">Download files:</p>
+  <!-- <a href="{{ '/media/output/output1.csv' }}">output file</a> -->
+ <!-- <ul class="upload_buttons d-flex justify-content-left" style="list-style-type: none;">-->
+  <a class="btn btn-primary " href="{{ '/media/sslexpiry/output.csv' }}">Output file</a></div>
+  
+  <p style="text-align: left; margin-top:10px ">Uploaded files:</p>
+  <ul>
+    {% for obj in documents1 %}
+      <li>
+       
+        <a href="{{ obj.datafile.url }}">{{ obj.datafile.name }}</a>
+        <small>(Description : {{ obj.title }})</small>
+        <form method="POST" action="{% url 'expirydelete_document' obj.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form> 
+        <!-- <a href="" class="btn btn-danger btn-sm">Delete</a> -->
+      </li>
+    {% endfor %}
+  </ul> 
+{% endblock %}
+    
+    </div>
+    </div>    
+
+  
+  </body>
+</html>
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SSL Validitydate checker</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark header">
+        <a href="#" style="margin-left: 550px;" class="btn btn-primary bace_title">Website Expirydate Checker</a>
+    </nav>
+    <div class="d-flex justify-content-center upload_file_box">
+    <div class="card upload_box p-3" style="width: 40rem;">
+
+
+    <!-- {% block content %} -->
+  <ul class="upload_buttons d-flex justify-content-left" style="list-style-type: none;">
+    <li>
+      <a class="btn btn-success model_form_upload" href="{% url 'expiry_upload' %}">Go Back</a>
+    </li>
+    <li>
+      <a class="btn btn-primary" href="{{ '/media/sslexpiry/sslvalid.csv' }}">SSL Valid Files</a>
+    </li>
+    <li>
+      <a class="btn btn-primary" href="{{ '/media/sslexpiry/sslinvalid.csv' }}">SSL Invalid Files</a>
+    </li>
+
+  </ul>
+
+
+  <p></p>
+  <!-- <a href="{{ '/media/input/data1.csv' }}">input file</a> -->
+  <p></p>
+  
+  <div class="container">
+    <h2 class="text-center"><u>SSL Valid Sites </u></h2><br>            
+    <table class="table table-dark table-striped">
+      <thead>
+        <tr>
+          <!-- <th>URL</th> -->
+          <th>Domain Name</th>
+          <th>Expiry Date</th>
+          <th>Expiry Days</th>
+        </tr>
+      </thead>
+      <tbody>
+      <!-- jinja2 Technique -->
+ 
+      {% for a in p %}
+        <tr>
+          <!-- <td>{{a.Urls}}</td> -->
+          <td>{{a.Domain_Name}}</td>
+          <td>{{a.Expiry_Date}}</td>
+          <td>{{a.Expiry_Days}}</td>
+          <!-- <td>{{i.State}}</td>
+          <td>{{i.Profit}}</td> -->
+        </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+  <p></p>
+  <div class="container">
+    <h2 class="text-center"><u>SSL Invalid Sites </u></h2><br>            
+    <table class="table table-dark table-striped">
+      <thead>
+        <tr>
+          <!-- <th>URL</th> -->
+          <th>Domain Name</th>
+          <th>Expiry Date</th>
+          <th>Expiry Days</th>
+        </tr>
+      </thead>
+      <tbody>
+      <!-- jinja2 Technique -->
+ 
+      {% for n in h %}
+        <tr>
+          <!-- <td>{{a.Urls}}</td> -->
+          <td>{{n.Domain_Name}}</td>
+          <td>{{n.Expiry_Date}}</td>
+          <td>{{n.Expiry_Days}}</td>
+          <!-- <td>{{i.State}}</td>
+          <td>{{i.Profit}}</td> -->
+        </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+  <p></p>
+  <!-- <a href="{{ '/media/input/data1.csv' }}">input file</a> -->
+  {% endblock %}
+  </div>
+  </div>
+  
+  </body>
+</html>
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+
+
+<style>
+  /* .table-striped tbody tr {
+    word-wrap: break-word;
+   max-width: 1px;
+  }
+  .table-striped tbody td {
+    word-wrap: break-word;
+   max-width: 1px;
+  } */
+  .upload_buttons {
+    padding: 0px 11px;
+    justify-content: space-between;
+  }
+  .upload_file_box {
+    padding: 40px 0px;
+  }
+  .upload_box {
+    border-radius: 20px;
+    box-shadow: rgb(14 30 37 / 12%) 0px 2px 4px 0px, rgb(14 30 37 / 32%) 0px 2px 16px 0px;
+  }
+</style>
